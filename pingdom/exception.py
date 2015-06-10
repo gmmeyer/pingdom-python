@@ -21,6 +21,7 @@ except:
 import StringIO
 import urllib2
 
+
 class PingdomError(urllib2.URLError):
     def __init__(self, url_error):
         self.errormessage = url_error.reason
@@ -41,11 +42,16 @@ class PingdomHTTPError(PingdomError, urllib2.HTTPError):
         else:
             data = self.read()
 
-        j = simplejson.loads(data)
-        error = j['error']
-        self.statuscode = error['statuscode']
-        self.statusdesc = error['statusdesc']
-        self.errormessage = error['errormessage']
+        try:
+            j = simplejson.loads(data)
+            error = j['error']
+            self.statuscode = error['statuscode']
+            self.statusdesc = error['statusdesc']
+            self.errormessage = error['errormessage']
+        except Exception:
+            self.statuscode = -1
+            self.statusdesc = "Couldn't dump JSON"
+            self.errormessage = data
 
     def __repr__(self):
         return 'PingdomError: HTTP %s %s returned with message, "%s"' % (self.statuscode, self.statusdesc, self.errormessage)
