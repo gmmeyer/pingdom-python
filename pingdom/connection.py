@@ -144,7 +144,8 @@ class PingdomConnection(object):
         """Get a list of Pingdom checks, optionally filtered by check name"""
         limit = int(kwargs.get("limit", 25000))
         offset = int(kwargs.get("offset", 0))
-        response = PingdomRequest(self, 'checks?limit=%s&offset=%s' % (limit, offset)).fetch()
+        tags = bool(kwargs.get("include_tags", False))
+        response = PingdomRequest(self, 'checks?limit=%s&offset=%s&include_tags=%s' % (limit, offset, tags)).fetch()
         result = response.content
 
         pingdom_checks = []
